@@ -1,0 +1,1 @@
+"0","filter(tree_dat, grepl(""3$"", stand), year == 2007) %>% select(treeID, stand, year, rad_ib) %>% slice_min(order_by = rad_ib, n = 3)"

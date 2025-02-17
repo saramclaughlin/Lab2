@@ -3,7 +3,7 @@
     "path": "~/githhub/Lab2/docs/Questions.Rmd",
     "project_path": "docs/Questions.Rmd",
     "type": "r_markdown",
-    "hash": "1782848723",
+    "hash": "1064731259",
     "contents": "",
     "dirty": false,
     "created": 1739762313722.0,
@@ -12,15 +12,15 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "112,0",
-        "scrollLine": "112"
+        "cursorPosition": "90,50",
+        "scrollLine": "86"
     },
     "folds": "",
-    "lastKnownWriteTime": 1739764511,
+    "lastKnownWriteTime": 1739765488,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1739764511167,
+    "last_content_update": 1739765488868,
     "read_only": false,
     "read_only_alternatives": []
 }

@@ -1,0 +1,1 @@
+"0","mutate(tree_dat, rad_ib_cm = rad_ib_mm / 10, DBH = 2 * rad_ib_cm, BA = 0.00007854 * DBH^2) %>% filter(species == ""POTR"", year == 2007) %>% summarise(mean_BA = mean(BA, na.rm = TRUE))"

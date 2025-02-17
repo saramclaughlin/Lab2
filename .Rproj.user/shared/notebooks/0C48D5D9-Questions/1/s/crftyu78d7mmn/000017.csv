@@ -1,0 +1,1 @@
+"0","filter(tree_dat, standID == 5, year == 2007) %>% arrange(desc(rad_ib)) %>% slice_head(n = 3)"

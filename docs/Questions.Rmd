@@ -2,6 +2,15 @@
 title: "Questions"
 output: html_document
 ---
+```{r}
+tree_dat <- read.csv("~/githhub/Lab2/data/tree_dat.csv")
+```
+
+
+```{r}
+library(dplyr)
+```
+
 ## Question 1:
 The tree data CSV shows tree ID, stand ID, stand number, year, species, age, inc, and rad for each tree. This is set up as a table with trees for each row and characteristics of the tree in each column.
 ```{r}
@@ -40,13 +49,13 @@ filter(tree_dat, year == 2002) %>% slice_sample(prop = 0.3)
 ## Question 8:
 In descending order, the radius at breast height for the top three trees in stand 5 in 2007 are ID numbers 128, 157, and 135 with radii 239, 218, and 210. 
 ```{r}
-filter(tree_dat, standID == 5, year == 2007) %>% arrange(desc(rad_ib_mm)) %>% slice_head(n = 3)
+filter(tree_dat, standID == 5, year == 2007) %>% arrange(desc(rad_ib)) %>% slice_head(n = 3)
 ```
 
 ## Question 9: 
 The smallest three trees measured in 2007 from stand 3 are trees 1514, 1103, 1508.
 ```{r}
-filter(tree_dat, grepl("3$", stand), year == 2007) %>% select(treeID, stand, year, rad_ib_mm) %>% slice_min(order_by = rad_ib_mm, n = 3)
+filter(tree_dat, grepl("3$", stand), year == 2007) %>% select(treeID, stand, year, rad_ib) %>% slice_min(order_by = rad_ib, n = 3)
 ```
 
 ## Question 10: 
@@ -63,12 +72,12 @@ select(tree_dat, matches("ID|stand")) %>% glimpse()
 ```
 ## Question 13:
 ```{r}
-tree_dat <- tree_dat %>% rename(inc_unit_mm = inc_mm, rad_ib_unit_mm = rad_ib_mm) %>% glimpse()
+tree_dat <- tree_dat %>% rename(inc_mm = inc, rad_ib_mm = rad_ib) %>% glimpse()
 ```
 ## Question 14:
 The mean BA is ~0.037 m^2
 ```{r}
-mutate(tree_dat, rad_ib_cm = rad_ib_unit_mm / 10, DBH = 2 * rad_ib_cm, BA = 0.00007854 * DBH^2) %>% filter(species == "POTR", year == 2007) %>% summarise(mean_BA = mean(BA, na.rm = TRUE))
+mutate(tree_dat, rad_ib_cm = rad_ib_mm / 10, DBH = 2 * rad_ib_cm, BA = 0.00007854 * DBH^2) %>% filter(species == "POTR", year == 2007) %>% summarise(mean_BA = mean(BA, na.rm = TRUE))
 ```
 ## Question 15:
 There are 122,503 established tree records.
@@ -79,7 +88,7 @@ mutate(tree_dat, established = if_else(age > 5, TRUE, FALSE)) %>% count(establis
 ## Question 16:
 From the trees recorded in 2007, 1963 are poles, 252 are saplings, and 76 are sawlogs.
 ```{r}
-tree_dat <- tree_dat %>% mutate(rad_ib_cm = rad_ib_unit_mm / 10, DBH = 2 * rad_ib_cm)
+tree_dat <- tree_dat %>% mutate(rad_ib_cm = rad_ib_mm / 10, DBH = 2 * rad_ib_cm)
 ```
 ```{r}
 tree_dat <- tree_dat %>% mutate(DBH_class = case_when(DBH >= 0 & DBH < 2.5 ~ "seedling",DBH >= 2.5 & DBH < 10 ~ "sapling", DBH >= 10 & DBH < 30 ~ "pole", DBH >= 30 ~ "sawlog", TRUE ~ NA_character_))
