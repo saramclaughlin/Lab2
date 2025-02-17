@@ -1,0 +1,1 @@
+"0","mutate(tree_dat, established = if_else(age > 5, TRUE, FALSE)) %>% count(established)"

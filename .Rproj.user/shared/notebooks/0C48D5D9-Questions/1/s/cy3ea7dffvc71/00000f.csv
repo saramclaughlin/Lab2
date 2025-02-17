@@ -1,0 +1,1 @@
+"0","tree_dat <- tree_dat %>% mutate(DBH_class = case_when(DBH >= 0 & DBH < 2.5 ~ ""seedling"",DBH >= 2.5 & DBH < 10 ~ ""sapling"", DBH >= 10 & DBH < 30 ~ ""pole"", DBH >= 30 ~ ""sawlog"", TRUE ~ NA_character_))"

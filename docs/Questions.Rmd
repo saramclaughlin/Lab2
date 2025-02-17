@@ -1,0 +1,123 @@
+---
+title: "Questions"
+output: html_document
+---
+## Question 1:
+The tree data CSV shows tree ID, stand ID, stand number, year, species, age, inc, and rad for each tree. This is set up as a table with trees for each row and characteristics of the tree in each column.
+```{r}
+glimpse(tree_dat)
+```
+## Question 2:
+979 records have been made in stand 1. 
+```{r}
+filter(tree_dat, standID == 1)
+```
+## Question 3:
+17,221 records of Abies balsamea and Pinus strobus species have been made. 
+```{r}
+filter(tree_dat, species == "ABBA" | species == "PIST")
+```
+## Question 4: 
+There are 7 records of trees older than 200 years in the last year of the dataset. 
+```{r}
+filter(tree_dat, age > 200 & year == 2007)
+```
+## Question 5:
+The oldest tree in the dataset is 269 years old and is a Pinus resinosa tree. Tree ID is 24.  
+```{r}
+slice_max(tree_dat, age)
+```
+## Question 6:
+The five oldest trees recorded in 2001 are 263, 259, 212, and 206 years old. They are Pinus resinosa and Fraxinus nigra trees. Tree IDs are 24, 25, 1595, 1598, and 1712. 
+```{r}
+filter(tree_dat, age>200 & year == 2001)
+```
+## Question 7:
+There are 687 trees in a 30% sample of those recorded in 2002.
+```{r}
+filter(tree_dat, year == 2002) %>% slice_sample(prop = 0.3)
+```
+## Question 8:
+In descending order, the radius at breast height for the top three trees in stand 5 in 2007 are ID numbers 128, 157, and 135 with radii 239, 218, and 210. 
+```{r}
+filter(tree_dat, standID == 5, year == 2007) %>% arrange(desc(rad_ib_mm)) %>% slice_head(n = 3)
+```
+
+## Question 9: 
+The smallest three trees measured in 2007 from stand 3 are trees 1514, 1103, 1508.
+```{r}
+filter(tree_dat, grepl("3$", stand), year == 2007) %>% select(treeID, stand, year, rad_ib_mm) %>% slice_min(order_by = rad_ib_mm, n = 3)
+```
+
+## Question 10: 
+```{r}
+select(tree_dat, -stand) %>% glimpse()
+```
+## Question 11:
+```{r}
+select(tree_dat, matches("ID")) %>% glimpse()
+```
+## Question 12:
+```{r}
+select(tree_dat, matches("ID|stand")) %>% glimpse()
+```
+## Question 13:
+```{r}
+tree_dat <- tree_dat %>% rename(inc_unit_mm = inc_mm, rad_ib_unit_mm = rad_ib_mm) %>% glimpse()
+```
+## Question 14:
+The mean BA is ~0.037 m^2
+```{r}
+mutate(tree_dat, rad_ib_cm = rad_ib_unit_mm / 10, DBH = 2 * rad_ib_cm, BA = 0.00007854 * DBH^2) %>% filter(species == "POTR", year == 2007) %>% summarise(mean_BA = mean(BA, na.rm = TRUE))
+```
+## Question 15:
+There are 122,503 established tree records.
+```{r}
+mutate(tree_dat, established = if_else(age > 5, TRUE, FALSE)) %>% count(established)
+```
+
+## Question 16:
+From the trees recorded in 2007, 1963 are poles, 252 are saplings, and 76 are sawlogs.
+```{r}
+tree_dat <- tree_dat %>% mutate(rad_ib_cm = rad_ib_unit_mm / 10, DBH = 2 * rad_ib_cm)
+```
+```{r}
+tree_dat <- tree_dat %>% mutate(DBH_class = case_when(DBH >= 0 & DBH < 2.5 ~ "seedling",DBH >= 2.5 & DBH < 10 ~ "sapling", DBH >= 10 & DBH < 30 ~ "pole", DBH >= 30 ~ "sawlog", TRUE ~ NA_character_))
+```
+```{r}
+filter(tree_dat, year == 2007) %>% count(DBH_class)
+```
+
+## Question 17:
+For the trees recorded in 2007, the mean diameter at breast height is ~16.1 cm and the standard deviation is ~6.14 cm. The standard deviation means on average, a tree deviates from the mean by 6.14 cm. 
+```{r}
+filter(tree_dat, year == 2007) %>% summarize(mean_DBH = mean(DBH), sd_DBH = sd(DBH))
+```
+## Question 18: 
+The three species with the oldest mean age are Thuja occidentalis, Fraxinus nigra, and Pinus strobus. 
+```{r}
+filter(tree_dat, year == 2003) %>% group_by(species) %>% summarize(mean_age = mean(age)) %>% arrange(desc(mean_age)) %>% slice_head(n = 3)
+```
+
+## Question 19:
+There are 111 unique years of data, with the first year being 1897 and the last being 2007.
+```{r}
+summarize(tree_dat, num_unique_yrs = n_distinct(year), first_year = min(year), last_year = max(year))
+```
+
+## Question 20:
+Stands A1, D1, D2, D3, and F1 are tied with having the largest number of years recorded (111).
+```{r}
+group_by(tree_dat, stand) %>% summarize(num_unique_yrs = n_distinct(year)) %>% filter(num_unique_yrs == max(num_unique_yrs))
+```
+
+## Final Question:
+The three species with the fastest growth are Pinus resinosa, Populus tremuloides, and Pinus banksiana. The three species with the slowest growth rates are Larix laricina, Thuja occidentalis, and Quercus rubra. 
+```{r}
+tree_dat %>% arrange(species, treeID, year) %>% group_by(species, treeID) %>% mutate(growth_per_year = DBH - lag(DBH), total_growth = DBH - first(DBH)) %>% filter(!is.na(growth_per_year)) %>% group_by(species) %>% summarize(avg_growth = mean(growth_per_year), sd_growth = sd(growth_per_year), total_growth_record = n_distinct(year)) %>% filter(total_growth_record >= 10) %>% arrange(desc(avg_growth)) %>% slice_head(n = 3)
+```
+
+```{r}
+tree_dat %>% arrange(species, treeID, year) %>% group_by(species, treeID) %>% mutate(growth_per_year = DBH - lag(DBH), total_growth = DBH - first(DBH)) %>% filter(!is.na(growth_per_year)) %>% group_by(species) %>% summarize(avg_growth = mean(growth_per_year), sd_growth = sd(growth_per_year), total_growth_record = n_distinct(year)) %>% filter(total_growth_record >= 10) %>% arrange(avg_growth) %>% slice_head(n = 3)
+```
+

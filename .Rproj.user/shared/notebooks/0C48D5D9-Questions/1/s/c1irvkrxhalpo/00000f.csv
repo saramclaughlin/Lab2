@@ -1,0 +1,1 @@
+"0","group_by(tree_dat, stand) %>% summarize(num_unique_yrs = n_distinct(year)) %>% filter(num_unique_yrs == max(num_unique_yrs))"

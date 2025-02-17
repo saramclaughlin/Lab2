@@ -1,0 +1,1 @@
+"0","tree_dat <- tree_dat %>% mutate(rad_ib_cm = rad_ib_unit_mm / 10, DBH = 2 * rad_ib_cm)"
